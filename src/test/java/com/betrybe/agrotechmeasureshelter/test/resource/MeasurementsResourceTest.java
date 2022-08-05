@@ -32,13 +32,13 @@ public class MeasurementsResourceTest {
 
   @Test
   public void testSuccesfulGetRequest() {
-    given().when().get("/measurement").then().statusCode(200).body(containsString("[]"));
+    given().when().get("/measurements").then().statusCode(200).body(containsString("[]"));
   }
 
   @Test
   public void testSuccesfulPostRequest() {
     Measurements mockMeasurement = new Measurements("507f1f77bcf86cd799439011", 15.33, 3.33, 3.33);
     given().body(mockMeasurement).header("Content-Type", "application/json").when()
-        .post("/measurement").then().statusCode(201);
+        .post("/measurements").then().statusCode(201);
   }
 }
