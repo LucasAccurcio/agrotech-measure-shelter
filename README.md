@@ -1,60 +1,248 @@
-# agrotech-measure-shelter Project
+# Agrotech Measure Shelter :artificial_satellite::ear_of_rice:
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+API developed with Java + Quarkus. Testing with JUnit + QuarkusTest. Database hosted in Atlas mongo with connection through Panache.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+The goal of this app is to create a central interface for maintaining and monitoring measure shelters. The documents contain information about the shelters, the measurements and satellite pictures taken every 20 days.
 
-## Running the application in dev mode
+## API Reference
 
-You can run your application in dev mode that enables live coding using:
-```shell script
-./mvnw compile quarkus:dev
+_______________________________________________________________________________________________________________
+Our API has been deployed to Heroku, the URI for all the requests is https://measure-shelter-api.herokuapp.com/
+_______________________________________________________________________________________________________________
+
+
+#### Measurements
+
+```http
+  GET /measurements
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+| Return | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Measurement` | `[json]` | all measurements |
 
-## Packaging and running the application
+Measurement: {
+    idIsle,
+    temperature,
+    soilHumidity,
+    airHumidity,
+    measuredAt
+}
 
-The application can be packaged using:
-```shell script
-./mvnw package
-```
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
+```http
+  POST /measurements
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+| Body | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Measurement` | `json` | **Required** measurement by an isle (NO DATE)|
 
-## Creating a native executable
+Measurement: {
+    idIsle,
+    temperature,
+    soilHumidity,
+    airHumidity,
+}
 
-You can create a native executable using: 
-```shell script
-./mvnw package -Pnative
+#### Isle
+
+```http
+  GET /isles
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
+| Return | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Isle` | `[json]` | measurement isles |
+
+Isle: {
+    id,
+    name,
+    status
+}
+
+```http
+  POST /isles
 ```
 
-You can then execute your native executable with: `./target/agrotech-measure-shelter-1.0.0-SNAPSHOT-runner`
+| Body | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Isle` | `json` | measurement isle (NO ID) |
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
+Isle: {
+    name,
+    status
+}
 
-## Related Guides
+```http
+  GET /isles/{id}
+```
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `id` | `String` | isle id |
 
-- MongoDB with Panache ([guide](https://quarkus.io/guides/mongodb-panache)): Simplify your persistence code for MongoDB via the active record or the repository pattern
+| Return | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Isle` | `json` | measurement isle |
 
-## Provided Code
+Isle: {
+    id,
+    name,
+    status
+}
 
-### RESTEasy JAX-RS
+```http
+  PUT /isles/{id}
+```
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `id` | `String` | isle id |
 
-Easily start your RESTful Web Services
+| Body | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Isle` | `json` | measurement isle |
 
-[Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
+| Return | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Isle` | `json` | measurement isle |
+
+Isle: {
+    id,
+    name,
+    status
+}
+
+```http
+  DELETE /isles/{id}
+```
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `id` | `String` | isle id |
+
+```http
+  GET /isles/search/{name}
+```
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `name` | `String` | isle name |
+
+| Return | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Isle` | `json` | measurement isle |
+
+Isle: {
+    id,
+    name,
+    status
+}
+
+```http
+  GET /isles/count
+```
+| Return | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Count` | `long` | isle count |
+
+Isle: {
+    id,
+    name,
+    status
+}
+
+#### Image
+
+```http
+  GET /images
+```
+
+| Return | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Image` | `[json]` | reference to satellite images |
+
+Image: {
+    createdAt,
+    path
+}
+
+```http
+  POST /images
+```
+
+| Body | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `File` | `Multipart FormData` | **Required** image file |
+
+```http
+  GET /images/{createdAt}
+```
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `createdAt` | `String` | date and time of insertion |
+
+| Return | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Download Link` | `.png` | download link |
+
+Image: {
+    createdAt,
+    path
+}
+
+## Sample App
+_______________________________________________________________________________________________________________
+We've created a sample Homepage for our app, check it out at
+_______________________________________________________________________________________________________________
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://link-to-project
+```
+
+Go to the project directory
+
+```bash
+  cd my-project
+```
+
+Create package
+
+```bash
+  ./mvnw clean package
+```
+
+Build the docker image
+
+```bash
+  docker build -f src/main/docker/Dockerfile.jvm -t quarkus/agrotech-measure-shelter-jvm .
+```
+
+Deploy the containers on your local network
+
+```bash
+  cd src/main/docker && docker-compose up
+```
+
+
+## Running Tests
+
+To run tests, run the following command
+
+```bash
+  mvn test
+```
+
+To check test coverage, go to
+
+```bash
+  target/site/jacoco
+```
+
+and open the `index.html` on a browser.
+
+## Authors
+
+- [@EcioFerraz](https://www.github.com/ecioferraz)
+- [@LucasAccurcio](https://www.github.com/lucasaccurcio)
+- [@GustavoDias](https://www.github.com/unamednada)
